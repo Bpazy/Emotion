@@ -1,0 +1,97 @@
+package com.github.bpazy.emotion;
+
+import com.github.bpazy.emotion.exception.ConvertEmotionException;
+import com.google.gson.Gson;
+import com.qcloud.Module.Wenzhi;
+import com.qcloud.QcloudApiModuleCenter;
+import com.rometools.rome.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.io.FeedException;
+import com.rometools.rome.io.SyndFeedInput;
+import com.rometools.rome.io.XmlReader;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+import java.util.TreeMap;
+
+/**
+ * Created by Ziyuan
+ * on 2017/2/13
+ */
+public class Text2Emotion {
+
+    private Logger logger = LoggerFactory.getLogger(Text2Emotion.class);
+    private Gson gson = new Gson();
+    private EmotionConfig config;
+
+    private Emotion analysis(String content) throws ConvertEmotionException {
+        TreeMap<String, Object> wzConfig = new TreeMap<>();
+        wzConfig.put("SecretId", config.getSecretId());
+        wzConfig.put("SecretKey", config.getSecretKey());
+
+        wzConfig.put("RequestMethod", "GET");
+        wzConfig.put("DefaultRegion", "gz");
+
+        QcloudApiModuleCenter module = new QcloudApiModuleCenter(new Wenzhi(), wzConfig);
+
+        TreeMap<String, Object> params = new TreeMap<>();
+        params.put("content", content);
+        params.put("type", "4");
+
+        String result;
+        try {
+            result = module.call("TextSentiment", params);
+        } catch (Exception e) {
+            throw new ConvertEmotionException();
+        }
+        return gson.fromJson(result, Emotion.class);
+    }
+
+    public void run(EmotionConfig config) {
+        this.config = config;
+        String url = "https://api.prprpr.me/weibo/rss/" + config.getUid();
+        try {
+            SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(url)));
+            List<SyndEntry> entries = feed.getEntries();
+            entries.forEach(syndEntry -> {
+                String value = syndEntry.getDescription().getValue();
+                Document parse = Jsoup.parseBodyFragment(value);
+                String text = parse.text();
+                handleText(text);
+            });
+        } catch (FeedException | IOException e) {
+            logger.error("创建URL错误", e);
+        }
+    }
+
+    private void handleText(String text) {
+        if (text.contains("转发")) {
+            return;
+        }
+        try {
+            Emotion emotion = analysis(text);
+            logger.info("{}", emotion);
+            boolean negative = checkNegativeEmotion(emotion);
+            if (negative) {
+                String msg = String.format("检测到消极情绪微博: (乐观%.0f%% 消极%.0f%%)\n%s",
+                        emotion.getPositive() * 100,
+                        emotion.getNegative() * 100,
+                        text);
+                Helper.sendEmail(config, msg);
+            }
+        } catch (ConvertEmotionException e) {
+            logger.error("腾讯文智错误，分析情绪失败", e);
+        }
+    }
+
+    private boolean checkNegativeEmotion(Emotion emotion) {
+        double positive = emotion.getPositive();
+        double negative = emotion.getNegative();
+        return positive < negative;
+    }
+}
