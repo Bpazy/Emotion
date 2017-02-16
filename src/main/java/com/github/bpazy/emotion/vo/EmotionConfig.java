@@ -1,6 +1,7 @@
 package com.github.bpazy.emotion.vo;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Ziyuan
@@ -16,6 +17,27 @@ public class EmotionConfig {
     private String emailPassword;
     private List<String> emails;
     private List<String> mobiles;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EmotionConfig that = (EmotionConfig) o;
+        return emailPort == that.emailPort &&
+                Objects.equals(uid, that.uid) &&
+                Objects.equals(secretId, that.secretId) &&
+                Objects.equals(secretKey, that.secretKey) &&
+                Objects.equals(emailHostName, that.emailHostName) &&
+                Objects.equals(emailUserName, that.emailUserName) &&
+                Objects.equals(emailPassword, that.emailPassword) &&
+                Objects.equals(emails, that.emails) &&
+                Objects.equals(mobiles, that.mobiles);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uid, secretId, secretKey, emailHostName, emailPort, emailUserName, emailPassword, emails, mobiles);
+    }
 
     @Override
     public String toString() {

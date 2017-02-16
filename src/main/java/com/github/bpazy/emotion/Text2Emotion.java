@@ -30,7 +30,8 @@ import java.util.*;
 public class Text2Emotion {
 
     private BeanCopier copier = BeanCopier.create(EmotionConfig.class, EmotionConfig.class, false);
-    private final long PERIOD = 60 * 1000;
+    private final long PERIOD = 1000 * 60;
+    private final long WEIBO_PERIOD = 1000 * 60 * 2;
 
     private Logger logger = LoggerFactory.getLogger(Text2Emotion.class);
     private Gson gson = new Gson();
@@ -65,8 +66,23 @@ public class Text2Emotion {
     }
 
     public void run(EmotionConfig config) {
-        startModifyConfigPeriod();
         this.config = config;
+        logger.info("Emotion 😊");
+        startModifyConfigPeriod();
+        startMonitorWeibo();
+    }
+
+    private void startMonitorWeibo() {
+        Timer timer = new Timer("WeiboMonitor");
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                inspectWeibo(config);
+            }
+        }, 0, WEIBO_PERIOD);
+    }
+
+    private void inspectWeibo(EmotionConfig config) {
         String url = "https://api.prprpr.me/weibo/rss/" + config.getUid();
         try {
             SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(url)));
@@ -76,12 +92,27 @@ public class Text2Emotion {
                 WeiboItem weiboItem = createWeiboItem(syndEntry);
                 items.add(weiboItem);
             });
-            items.forEach(item -> {
-                handleText(item.getText());
-            });
+
+            List<WeiboItem> localItems = Helper.loadLocalWeiboItems();
+            if (!items.equals(localItems)) {
+                //微博有更新
+                doWithNewItem(items, localItems);
+                Helper.writeLocalItems(items);
+            } else {
+                logger.debug("无微博更新");
+            }
         } catch (FeedException | IOException e) {
             logger.error("创建URL错误", e);
         }
+    }
+
+    private void doWithNewItem(List<WeiboItem> items, List<WeiboItem> localItems) {
+        items.forEach(item -> {
+            if (localItems.contains(item)) {
+                return;
+            }
+            handleText(item.getText());
+        });
     }
 
     private WeiboItem createWeiboItem(SyndEntry entry) {
@@ -96,11 +127,15 @@ public class Text2Emotion {
     }
 
     private void startModifyConfigPeriod() {
-        Timer timer = new Timer();
+        Timer timer = new Timer("ConfigMonitor", true);
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 EmotionConfig emotionConfig = Helper.loadConfig();
+                if (config.equals(emotionConfig)) {
+                    return;
+                }
+                logger.info("检测到配置文件更新");
                 copier.copy(emotionConfig, config, null);
             }
         }, PERIOD, PERIOD);

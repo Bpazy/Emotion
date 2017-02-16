@@ -1,7 +1,9 @@
 package com.github.bpazy.emotion;
 
 import com.github.bpazy.emotion.vo.EmotionConfig;
+import com.github.bpazy.emotion.vo.WeiboItem;
 import com.google.common.collect.Lists;
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.mail.DefaultAuthenticator;
@@ -12,6 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Ziyuan
@@ -23,8 +28,8 @@ public class Helper {
     private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public static EmotionConfig loadConfig() {
-        try {
-            return gson.fromJson(new FileReader("emotion.json"), EmotionConfig.class);
+        try (FileReader reader = new FileReader("emotion.json")) {
+            return gson.fromJson(reader, EmotionConfig.class);
         } catch (FileNotFoundException e) {
             logger.error("文件emotion.json不存在", e);
             File file = new File("emotion.json");
@@ -40,8 +45,52 @@ public class Helper {
                 logger.error("创建配置文件失败", e1);
             }
             System.exit(0);
+        } catch (IOException e) {
+            logger.error("关闭emotion.json失败", e);
         }
         throw new Error("Logic ERROR");
+    }
+
+    public static List<WeiboItem> loadLocalWeiboItems() {
+        try (FileReader reader = new FileReader("local.txt")) {
+            Type type = new TypeToken<List<WeiboItem>>() {
+            }.getType();
+            return gson.fromJson(reader, type);
+        } catch (FileNotFoundException e) {
+            logger.error("文件local.txt不存在", e);
+            File file = new File("local.txt");
+            try {
+                boolean newFile = file.createNewFile();
+                if (!newFile) {
+                    throw new IOException();
+                }
+                logger.info("创建本地缓存文件成功, {}", file.getAbsolutePath());
+            } catch (IOException e1) {
+                logger.error("创建本地缓存文件失败", e1);
+            }
+        } catch (IOException e) {
+            logger.error("关闭local.txt失败", e);
+        }
+        return new ArrayList<>();
+    }
+
+    public static <T> void writeLocalItems(List<T> items) {
+        File file = new File("local.txt");
+        try {
+            //noinspection ResultOfMethodCallIgnored
+            file.delete();
+            boolean newFile = file.createNewFile();
+            if (!newFile) {
+                throw new IOException("创建文件local.txt失败");
+            }
+            FileOutputStream outputStream = new FileOutputStream(file);
+            outputStream.write(gson.toJson(items).getBytes());
+            outputStream.close();
+        } catch (SecurityException se) {
+            logger.error("文件存在，删除失败", se);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static EmotionConfig defaultEmotionConfig() {

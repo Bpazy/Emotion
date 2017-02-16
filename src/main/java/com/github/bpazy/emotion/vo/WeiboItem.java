@@ -1,6 +1,7 @@
 package com.github.bpazy.emotion.vo;
 
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Created by Ziyuan
@@ -32,5 +33,19 @@ public class WeiboItem {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        WeiboItem weiboItem = (WeiboItem) o;
+        return Objects.equals(publishedDate, weiboItem.publishedDate) &&
+                Objects.equals(text, weiboItem.text);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(publishedDate, text);
     }
 }
