@@ -3,6 +3,8 @@ package com.github.bpazy.emotion;
 import com.github.bpazy.emotion.exception.ConvertEmotionException;
 import com.github.bpazy.emotion.vo.Emotion;
 import com.github.bpazy.emotion.vo.EmotionConfig;
+import com.github.bpazy.emotion.vo.WeiboItem;
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.qcloud.Module.Wenzhi;
 import com.qcloud.QcloudApiModuleCenter;
@@ -19,10 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Created by Ziyuan
@@ -67,17 +66,29 @@ public class Text2Emotion {
         try {
             SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(url)));
             List<SyndEntry> entries = feed.getEntries();
+            List<WeiboItem> items = Lists.newArrayList();
             entries.forEach(syndEntry -> {
-                String value = syndEntry.getDescription().getValue();
-                Document parse = Jsoup.parseBodyFragment(value);
-                String text = parse.text();
-                handleText(text);
+                WeiboItem weiboItem = createWeiboItem(syndEntry);
+                items.add(weiboItem);
+            });
+            items.forEach(item -> {
+                handleText(item.getText());
             });
         } catch (FeedException | IOException e) {
             logger.error("创建URL错误", e);
         }
     }
 
+    private WeiboItem createWeiboItem(SyndEntry entry) {
+        String value = entry.getDescription().getValue();
+        Document parse = Jsoup.parseBodyFragment(value);
+        String text = parse.text();
+        Date publishedDate = entry.getPublishedDate();
+        WeiboItem item = new WeiboItem();
+        item.setText(text);
+        item.setPublishedDate(publishedDate);
+        return item;
+    }
 
     private void startModifyConfigPeriod() {
         Timer timer = new Timer();
