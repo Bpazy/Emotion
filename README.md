@@ -2,12 +2,18 @@ Emotion
 =======
 监测某账号的微博情绪值。
 
+
 首次运行会自动创建配置文件(emotion.json)和程序缓存(local.txt)，并会扫描一遍所有微博。
+
 
 配置文件格式:
 ```
 {
   "uid": "0000000000", //被检测用户微博UID
+  "filters": [ //过滤词，微博含有过滤词将不参与分析
+    "转发"
+  ],
+  "threshold": 0, //阈值，负情绪阈值，为0则分析所有微博，并发送信息到邮箱
   "secretId": "Your secretId", //腾讯文智申请的secretID
   "secretKey": "Your secretKey", //腾讯文智申请的secretKey
   "emailHostName": "smtp.163.com",
