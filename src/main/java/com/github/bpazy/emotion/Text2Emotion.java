@@ -67,7 +67,7 @@ public class Text2Emotion {
 
     public void run(EmotionConfig config) {
         this.config = config;
-        logger.info("Emotion 😊");
+        logger.info("Emotion start...ヾ(o◕∀◕)ﾉヾ");
         startModifyConfigPeriod();
         startMonitorWeibo();
     }
@@ -142,15 +142,13 @@ public class Text2Emotion {
     }
 
     private void handleText(String text) {
-        if (text.contains("转发")) {
-            return;
-        }
+        if (doFilter(text)) return;
         try {
             Emotion emotion = analysis(text);
             logger.info("{}", emotion);
             boolean negative = checkNegativeEmotion(emotion);
             if (negative) {
-                String msg = String.format("检测到消极情绪微博: (乐观%.0f%% 消极%.0f%%)\n%s",
+                String msg = String.format("检测到微博: (乐观%.0f%% 消极%.0f%%)\n%s",
                         emotion.getPositive() * 100,
                         emotion.getNegative() * 100,
                         text);
@@ -161,9 +159,18 @@ public class Text2Emotion {
         }
     }
 
+    private boolean doFilter(String text) {
+        List<String> filters = config.getFilters();
+        for (String filter : filters) {
+            if (text.contains(filter)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean checkNegativeEmotion(Emotion emotion) {
-        double positive = emotion.getPositive();
         double negative = emotion.getNegative();
-        return positive < negative;
+        return negative >= config.getThreshold();
     }
 }

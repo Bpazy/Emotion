@@ -9,6 +9,8 @@ import java.util.Objects;
  */
 public class EmotionConfig {
     private String uid;
+    private List<String> filters;
+    private int threshold;
     private String secretId;
     private String secretKey;
     private String emailHostName;
@@ -23,8 +25,10 @@ public class EmotionConfig {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EmotionConfig that = (EmotionConfig) o;
-        return emailPort == that.emailPort &&
+        return threshold == that.threshold &&
+                emailPort == that.emailPort &&
                 Objects.equals(uid, that.uid) &&
+                Objects.equals(filters, that.filters) &&
                 Objects.equals(secretId, that.secretId) &&
                 Objects.equals(secretKey, that.secretKey) &&
                 Objects.equals(emailHostName, that.emailHostName) &&
@@ -36,13 +40,15 @@ public class EmotionConfig {
 
     @Override
     public int hashCode() {
-        return Objects.hash(uid, secretId, secretKey, emailHostName, emailPort, emailUserName, emailPassword, emails, mobiles);
+        return Objects.hash(uid, filters, threshold, secretId, secretKey, emailHostName, emailPort, emailUserName, emailPassword, emails, mobiles);
     }
 
     @Override
     public String toString() {
         return "EmotionConfig{" +
                 "uid='" + uid + '\'' +
+                ", filters=" + filters +
+                ", threshold=" + threshold +
                 ", secretId='" + secretId + '\'' +
                 ", secretKey='" + secretKey + '\'' +
                 ", emailHostName='" + emailHostName + '\'' +
@@ -52,6 +58,24 @@ public class EmotionConfig {
                 ", emails=" + emails +
                 ", mobiles=" + mobiles +
                 '}';
+    }
+
+    public List<String> getFilters() {
+        return filters;
+    }
+
+    public EmotionConfig setFilters(List<String> filters) {
+        this.filters = filters;
+        return this;
+    }
+
+    public int getThreshold() {
+        return threshold;
+    }
+
+    public EmotionConfig setThreshold(int threshold) {
+        this.threshold = threshold;
+        return this;
     }
 
     public String getUid() {

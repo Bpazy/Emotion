@@ -55,9 +55,13 @@ public class Helper {
         try (FileReader reader = new FileReader("local.txt")) {
             Type type = new TypeToken<List<WeiboItem>>() {
             }.getType();
-            return gson.fromJson(reader, type);
+            List<WeiboItem> weiboItems = gson.fromJson(reader, type);
+            if (weiboItems == null) {
+                return new ArrayList<>();
+            }
+            return weiboItems;
         } catch (FileNotFoundException e) {
-            logger.error("文件local.txt不存在", e);
+            logger.error("文件local.txt异常", e);
             File file = new File("local.txt");
             try {
                 boolean newFile = file.createNewFile();
@@ -98,6 +102,8 @@ public class Helper {
         config.setEmails(Lists.newArrayList("example@example.com"));
         config.setMobiles(Lists.newArrayList("12345678910"));
         config.setUid("0000000000");
+        config.setFilters(Lists.newArrayList("转发"));
+        config.setThreshold(0);
         config.setSecretId("Your secretId");
         config.setSecretKey("Your secretKey");
         config.setEmailHostName("smtp.163.com");
