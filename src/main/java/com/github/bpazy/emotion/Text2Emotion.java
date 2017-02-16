@@ -1,6 +1,8 @@
 package com.github.bpazy.emotion;
 
 import com.github.bpazy.emotion.exception.ConvertEmotionException;
+import com.github.bpazy.emotion.vo.Emotion;
+import com.github.bpazy.emotion.vo.EmotionConfig;
 import com.google.gson.Gson;
 import com.qcloud.Module.Wenzhi;
 import com.qcloud.QcloudApiModuleCenter;

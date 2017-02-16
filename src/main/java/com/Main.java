@@ -1,6 +1,6 @@
 package com;
 
-import com.github.bpazy.emotion.EmotionConfig;
+import com.github.bpazy.emotion.vo.EmotionConfig;
 import com.github.bpazy.emotion.Helper;
 import com.github.bpazy.emotion.Text2Emotion;
 

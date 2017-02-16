@@ -1,4 +1,4 @@
-package com.github.bpazy.emotion;
+package com.github.bpazy.emotion.vo;
 
 import java.util.List;
 

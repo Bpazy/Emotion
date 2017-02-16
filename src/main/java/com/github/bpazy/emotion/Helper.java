@@ -1,5 +1,6 @@
 package com.github.bpazy.emotion;
 
+import com.github.bpazy.emotion.vo.EmotionConfig;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
