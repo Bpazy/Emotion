@@ -22,3 +22,13 @@ dependencies {
     compile group: 'cglib', name: 'cglib-nodep', version: '3.2.4'
 
 }
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Version': version,
+                'Main-Class': 'com.Main'
+    }
+    baseName = project.name
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
