@@ -41,7 +41,7 @@ public class Helper {
             }
             System.exit(0);
         }
-        return null;
+        throw new Error("Logic ERROR");
     }
 
     private static EmotionConfig defaultEmotionConfig() {

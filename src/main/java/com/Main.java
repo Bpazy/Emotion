@@ -4,8 +4,6 @@ import com.github.bpazy.emotion.EmotionConfig;
 import com.github.bpazy.emotion.Helper;
 import com.github.bpazy.emotion.Text2Emotion;
 
-import java.util.Timer;
-
 /**
  * Created by Ziyuan
  * on 2017/2/13
@@ -16,10 +14,5 @@ public class Main {
     public static void main(String[] args) {
         Text2Emotion emotion = new Text2Emotion();
         emotion.run(config);
-    }
-
-    private static void scanConfigCycled() {
-        Timer timer = new Timer();
-        timer.schedule();
     }
 }

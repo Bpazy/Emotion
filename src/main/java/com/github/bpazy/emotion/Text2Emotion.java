@@ -9,6 +9,7 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
+import net.sf.cglib.beans.BeanCopier;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
@@ -17,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.TreeMap;
 
 /**
@@ -24,6 +27,9 @@ import java.util.TreeMap;
  * on 2017/2/13
  */
 public class Text2Emotion {
+
+    private BeanCopier copier = BeanCopier.create(EmotionConfig.class, EmotionConfig.class, false);
+    private final long PERIOD = 60 * 1000;
 
     private Logger logger = LoggerFactory.getLogger(Text2Emotion.class);
     private Gson gson = new Gson();
@@ -53,6 +59,7 @@ public class Text2Emotion {
     }
 
     public void run(EmotionConfig config) {
+        startModifyConfigPeriod();
         this.config = config;
         String url = "https://api.prprpr.me/weibo/rss/" + config.getUid();
         try {
@@ -67,6 +74,18 @@ public class Text2Emotion {
         } catch (FeedException | IOException e) {
             logger.error("创建URL错误", e);
         }
+    }
+
+
+    private void startModifyConfigPeriod() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                EmotionConfig emotionConfig = Helper.loadConfig();
+                copier.copy(emotionConfig, config, null);
+            }
+        }, PERIOD, PERIOD);
     }
 
     private void handleText(String text) {

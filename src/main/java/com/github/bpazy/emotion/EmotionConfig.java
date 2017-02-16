@@ -32,84 +32,75 @@ public class EmotionConfig {
                 '}';
     }
 
-    public String getEmailHostName() {
-        return emailHostName;
+    public String getUid() {
+        return uid;
     }
 
-    public EmotionConfig setEmailHostName(String emailHostName) {
-        this.emailHostName = emailHostName;
-        return this;
-    }
-
-    public int getEmailPort() {
-        return emailPort;
-    }
-
-    public EmotionConfig setEmailPort(int emailPort) {
-        this.emailPort = emailPort;
-        return this;
-    }
-
-    public String getEmailUserName() {
-        return emailUserName;
-    }
-
-    public EmotionConfig setEmailUserName(String emailUserName) {
-        this.emailUserName = emailUserName;
-        return this;
-    }
-
-    public String getEmailPassword() {
-        return emailPassword;
-    }
-
-    public EmotionConfig setEmailPassword(String emailPassword) {
-        this.emailPassword = emailPassword;
-        return this;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getSecretId() {
         return secretId;
     }
 
-    public EmotionConfig setSecretId(String secretId) {
+    public void setSecretId(String secretId) {
         this.secretId = secretId;
-        return this;
     }
 
     public String getSecretKey() {
         return secretKey;
     }
 
-    public EmotionConfig setSecretKey(String secretKey) {
+    public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
-        return this;
     }
 
-    public String getUid() {
-        return uid;
+    public String getEmailHostName() {
+        return emailHostName;
     }
 
-    public EmotionConfig setUid(String uid) {
-        this.uid = uid;
-        return this;
+    public void setEmailHostName(String emailHostName) {
+        this.emailHostName = emailHostName;
+    }
+
+    public int getEmailPort() {
+        return emailPort;
+    }
+
+    public void setEmailPort(int emailPort) {
+        this.emailPort = emailPort;
+    }
+
+    public String getEmailUserName() {
+        return emailUserName;
+    }
+
+    public void setEmailUserName(String emailUserName) {
+        this.emailUserName = emailUserName;
+    }
+
+    public String getEmailPassword() {
+        return emailPassword;
+    }
+
+    public void setEmailPassword(String emailPassword) {
+        this.emailPassword = emailPassword;
     }
 
     public List<String> getEmails() {
         return emails;
     }
 
-    public EmotionConfig setEmails(List<String> emails) {
+    public void setEmails(List<String> emails) {
         this.emails = emails;
-        return this;
     }
 
     public List<String> getMobiles() {
         return mobiles;
     }
 
-    public EmotionConfig setMobiles(List<String> mobiles) {
+    public void setMobiles(List<String> mobiles) {
         this.mobiles = mobiles;
-        return this;
     }
 }
