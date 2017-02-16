@@ -36,7 +36,6 @@ public class Helper {
                 outputStream.write(gson.toJson(defaultEmotionConfig()).getBytes());
                 logger.info("创建配置文件成功, {}", file.getAbsolutePath());
             } catch (IOException e1) {
-                e1.printStackTrace();
                 logger.error("创建配置文件失败", e1);
             }
             System.exit(0);
