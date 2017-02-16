@@ -51,12 +51,17 @@ public class Text2Emotion {
         params.put("type", "4");
 
         String result;
+        Emotion emotion;
         try {
             result = module.call("TextSentiment", params);
+            emotion = gson.fromJson(result, Emotion.class);
+            if (emotion.getCode() != 0) {
+                throw new ConvertEmotionException(emotion);
+            }
         } catch (Exception e) {
-            throw new ConvertEmotionException();
+            throw new ConvertEmotionException(e);
         }
-        return gson.fromJson(result, Emotion.class);
+        return emotion;
     }
 
     public void run(EmotionConfig config) {
