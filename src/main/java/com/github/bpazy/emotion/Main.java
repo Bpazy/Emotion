@@ -1,8 +1,6 @@
-package com;
+package com.github.bpazy.emotion;
 
 import com.github.bpazy.emotion.vo.EmotionConfig;
-import com.github.bpazy.emotion.Helper;
-import com.github.bpazy.emotion.Text2Emotion;
 
 /**
  * Created by Ziyuan
