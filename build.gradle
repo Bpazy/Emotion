@@ -31,7 +31,7 @@ dependencies {
 task fatJar(type: Jar) {
     manifest {
         attributes 'Implementation-Version': version,
-                'Main-Class': 'com.Main'
+                'Main-Class': 'com.github.bpazy.emotion.Main'
     }
     baseName = project.name
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
