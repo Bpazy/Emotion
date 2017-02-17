@@ -2,7 +2,9 @@ Emotion
 =======
 监测某账号的微博情绪值。      
 (比如我女朋友发微博了，我这就收到邮件，接着该点赞点赞，该评论评论，该买买买就买买买)
-
+<div  align="center">    
+  <img src="https://github.com/Bpazy/utils/blob/master/pic/emotion_01.png" width = "300" alt="preview" align=center />
+</div>
 
 首次运行会自动创建配置文件(emotion.json)和程序缓存(local.txt)，并会扫描一遍所有微博。      
 
