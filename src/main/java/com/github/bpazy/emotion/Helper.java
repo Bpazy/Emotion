@@ -17,6 +17,7 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Ziyuan
@@ -113,7 +114,7 @@ public class Helper {
         return config;
     }
 
-    public static void sendEmail(EmotionConfig config, String msg) {
+    public static boolean sendEmail(EmotionConfig config, String msg) {
         try {
             Email email = new SimpleEmail();
             email.setHostName(config.getEmailHostName());
@@ -123,13 +124,19 @@ public class Helper {
             email.setFrom(config.getEmailUserName());
             email.setSubject("EmotionMail");
             email.setMsg(msg);
-            for (String mail : config.getEmails()) {
+            List<String> emails = config.getEmails();
+            if (Objects.isNull(emails)) {
+                return false;
+            }
+            for (String mail : emails) {
                 email.addTo(mail);
             }
             email.send();
-            logger.info("Email send to:{} - {}", config.getEmails(), msg);
+            logger.info("Email send to:{} - {}", emails, msg);
         } catch (EmailException e) {
             logger.error("邮箱地址填写错误或发送失败", e);
+            return false;
         }
+        return true;
     }
 }

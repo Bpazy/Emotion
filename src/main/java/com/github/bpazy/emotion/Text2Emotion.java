@@ -4,6 +4,7 @@ import com.github.bpazy.emotion.exception.ConvertEmotionException;
 import com.github.bpazy.emotion.vo.Emotion;
 import com.github.bpazy.emotion.vo.EmotionConfig;
 import com.github.bpazy.emotion.vo.WeiboItem;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.qcloud.Module.Wenzhi;
@@ -161,10 +162,13 @@ public class Text2Emotion {
 
     private boolean doFilter(String text) {
         List<String> filters = config.getFilters();
+        if (Objects.isNull(filters))
+            return false;
         for (String filter : filters) {
-            if (text.contains(filter)) {
+            if (Strings.isNullOrEmpty(filter))
+                continue;
+            if (text.contains(filter))
                 return true;
-            }
         }
         return false;
     }
