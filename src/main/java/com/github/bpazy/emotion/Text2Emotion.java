@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -85,6 +86,7 @@ public class Text2Emotion {
 
     private void inspectWeibo(EmotionConfig config) {
         String url = "https://api.prprpr.me/weibo/rss/" + config.getUid();
+        logger.debug("{}", url);
         try {
             SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(url)));
             List<SyndEntry> entries = feed.getEntries();
@@ -102,8 +104,10 @@ public class Text2Emotion {
             } else {
                 logger.debug("无微博更新");
             }
-        } catch (FeedException | IOException e) {
-            logger.error("创建URL错误", e);
+        } catch (MalformedURLException | FeedException e) {
+            logger.error("创建URL或创建SyndFeed错误", e);
+        } catch (IOException e) {
+            logger.error("IO错误", e);
         }
     }
 
