@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Ziyuan
@@ -90,11 +91,7 @@ public class Text2Emotion {
         try {
             SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(url)));
             List<SyndEntry> entries = feed.getEntries();
-            List<WeiboItem> items = Lists.newArrayList();
-            entries.forEach(syndEntry -> {
-                WeiboItem weiboItem = createWeiboItem(syndEntry);
-                items.add(weiboItem);
-            });
+            List<WeiboItem> items = entries.stream().map(this::createWeiboItem).collect(Collectors.toList());
 
             List<WeiboItem> localItems = Helper.loadLocalWeiboItems();
             if (!items.equals(localItems)) {
