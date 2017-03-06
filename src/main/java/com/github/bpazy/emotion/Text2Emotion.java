@@ -5,7 +5,6 @@ import com.github.bpazy.emotion.vo.Emotion;
 import com.github.bpazy.emotion.vo.EmotionConfig;
 import com.github.bpazy.emotion.vo.WeiboItem;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.qcloud.Module.Wenzhi;
 import com.qcloud.QcloudApiModuleCenter;
@@ -109,12 +108,7 @@ public class Text2Emotion {
     }
 
     private void doWithNewItem(List<WeiboItem> items, List<WeiboItem> localItems) {
-        items.forEach(item -> {
-            if (localItems.contains(item)) {
-                return;
-            }
-            handleText(item.getText());
-        });
+        items.stream().filter(item-> !localItems.contains(item)).forEach(item-> handleText(item.getText()));
     }
 
     private WeiboItem createWeiboItem(SyndEntry entry) {
